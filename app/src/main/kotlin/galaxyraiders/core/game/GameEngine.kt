@@ -21,7 +21,6 @@ object GameEngineConfig {
   val msPerFrame: Int = MILLISECONDS_PER_SECOND / this.frameRate
 }
 
-@Suppress("TooManyFunctions")
 class GameEngine(
   val generator: RandomGenerator,
   val controller: Controller,
@@ -57,6 +56,10 @@ class GameEngine(
     this.renderSpaceField()
   }
 
+  fun renderSpaceField() {
+    this.visualizer.renderSpaceField(this.field)
+  }
+
   fun processPlayerInput() {
     this.controller.nextPlayerCommand()?.also {
       when (it) {
@@ -80,7 +83,6 @@ class GameEngine(
     if (!this.playing) return
     this.handleCollisions()
     this.moveSpaceObjects()
-    this.trimSpaceObjects()
     this.generateAsteroids()
   }
 
@@ -94,14 +96,7 @@ class GameEngine(
   }
 
   fun moveSpaceObjects() {
-    this.field.moveShip()
-    this.field.moveAsteroids()
-    this.field.moveMissiles()
-  }
-
-  fun trimSpaceObjects() {
-    this.field.trimAsteroids()
-    this.field.trimMissiles()
+    this.field.spaceObjects.forEach { it.move() }
   }
 
   fun generateAsteroids() {
@@ -110,10 +105,6 @@ class GameEngine(
     if (probability <= GameEngineConfig.asteroidProbability) {
       this.field.generateAsteroid()
     }
-  }
-
-  fun renderSpaceField() {
-    this.visualizer.renderSpaceField(this.field)
   }
 }
 
