@@ -21,11 +21,13 @@ data class Point2D(val x: Double, val y: Double) {
   }
 
   fun impactVector(p: Point2D): Vector2D {
-    return INVALID_VECTOR
+    val dx = Math.abs(x - p.x)
+    val dy = Math.abs(y - p.y)
+    return Vector2D(dx, dy)
   }
 
   fun impactDirection(p: Point2D): Vector2D {
-    return INVALID_VECTOR
+    return impactVector(p).unit
   }
 
   fun contactVector(p: Point2D): Vector2D {
