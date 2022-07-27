@@ -35,8 +35,30 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
   var missiles: List<Missile> = emptyList()
     private set
 
+  var explosions: List<Explosion> = emptyList()
+    private set
+
   val spaceObjects: List<SpaceObject>
     get() = listOf(ship) + asteroids + missiles
+
+  fun filterExplosions() {
+    explosions = explosions.filter { it.isTriggered == false }
+  }
+
+  fun handleExplosion(first: SpaceObject, second: SpaceObject) {
+    if (first is Asteroid && second is Missile) explosions += createExplosionInPosition(first)
+    else if (first is Missile && second is Asteroid) explosions += createExplosionInPosition(second)
+  }
+
+  fun createExplosionInPosition(element: SpaceObject): Explosion {
+    return Explosion(
+      initialPosition = element.center,
+      initialVelocity = Vector2D(dx = 0.0, dy = 0.0),
+      radius = 10.0, // TODO passar para const
+      mass = 10.0,
+      isTriggered = false
+    )
+  }
 
   fun generateAsteroid() {
     asteroids += createAsteroidWithRandomProperties()

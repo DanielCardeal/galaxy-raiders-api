@@ -87,16 +87,19 @@ class GameEngine(
   }
 
   fun handleCollisions() {
+    this.field.filterExplosions()
     this.field.spaceObjects.forEachPair {
         (first, second) ->
       if (first.impacts(second)) {
         first.collideWith(second, GameEngineConfig.coefficientRestitution)
+        this.field.handleExplosion(first, second)
       }
     }
   }
 
   fun moveSpaceObjects() {
     this.field.spaceObjects.forEach { it.move() }
+    this.field.explosions.forEach { it.explode() }
   }
 
   fun generateAsteroids() {
