@@ -38,6 +38,21 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
   var asteroids: List<Asteroid> = emptyList()
     private set
 
+  var explosions: List<Explosion> = emptyList()
+    private set
+
+  fun tickExplosions() {
+    explosions.forEach { it.decreaseCountdown() }
+  }
+
+  fun handleExplosion(obj: SpaceObject) {
+    explosions = explosions + createExplosionInPosition(obj)
+  }
+
+  private fun createExplosionInPosition(element: SpaceObject): Explosion {
+    return Explosion(element.center, 5)
+  }
+
   val spaceObjects: List<SpaceObject>
     get() = listOf(this.ship) + this.missiles + this.asteroids
 
@@ -71,6 +86,10 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
     this.asteroids = this.asteroids.filter {
       it.inBoundaries(this.boundaryX, this.boundaryY)
     }
+  }
+
+  fun trimExplosions() {
+    explosions = explosions.filter { it.isActive() }
   }
 
   private fun initializeShip(): SpaceShip {
